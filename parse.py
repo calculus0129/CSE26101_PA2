@@ -13,6 +13,10 @@ import ctypes
 def parse_instr(buffer, index):
     instr = util.instruction()
     # Implement this function
+    instr.opcode, instr.rs, instr.rt, instr.rd, instr.shamt, instr.func_code, instr.value, instr.imm \
+      = map(util.fromBinary, [buffer[:6], buffer[6:11], buffer[11:16], buffer[16:21], buffer[21:26], buffer[26:32], buffer[:], buffer[16:]])
+    if instr.opcode == 2 or instr.opcode == 3:
+        instr.target = ((util.MEM_TEXT_START + index + 4) & 0xf0000000 | util.fromBinary(buffer[6:]) << 2) >> 2
     return instr
 
 def parse_data(buffer, index):
