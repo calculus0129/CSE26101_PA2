@@ -17,12 +17,13 @@ def parse_instr(buffer, index):
       = map(util.fromBinary, [buffer[:6], buffer[6:11], buffer[11:16], buffer[16:21], buffer[21:26], buffer[26:32], buffer[:], buffer[16:]])
     if instr.opcode == 2 or instr.opcode == 3:
         instr.target = ((util.MEM_TEXT_START + index + 4) & 0xf0000000 | util.fromBinary(buffer[6:]) << 2) >> 2
+    util.mem_write(util.MEM_TEXT_START + index, util.fromBinary(buffer))
     return instr
 
 def parse_data(buffer, index):
     # Implement this function
     # erase "pass" to start implementing
-    pass
+    util.mem_write(util.MEM_DATA_START + index, util.fromBinary(buffer))
 
 
 def print_parse_result(INST_INFO):
