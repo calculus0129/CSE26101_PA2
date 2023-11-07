@@ -1,5 +1,5 @@
 '''
-MIPS-32 Instruction Level Simulatr
+MIPS-32 Instruction Level Simulator
 
 CSE261 UNIST
 parse.py
@@ -9,6 +9,11 @@ import util
 import initialize
 import ctypes
 
+def neg_to_nbits(v, n = 32):
+    return v if v>=0 else (1<<n) + v
+
+def nbits_to_int(v, n = 32):
+    return v if v & 1 << n-1 == 0 else v - (1 << n)
 
 def parse_instr(buffer, index):
     instr = util.instruction()
@@ -16,7 +21,7 @@ def parse_instr(buffer, index):
     instr.opcode, instr.rs, instr.rt, instr.rd, instr.shamt, instr.func_code, instr.value, instr.imm \
       = map(util.fromBinary, [buffer[:6], buffer[6:11], buffer[11:16], buffer[16:21], buffer[21:26], buffer[26:32], buffer[:], buffer[16:]])
     if instr.opcode == 2 or instr.opcode == 3:
-        instr.target = ((util.MEM_TEXT_START + index + 4) & 0xf0000000 | util.fromBinary(buffer[6:]) << 2) >> 2
+        instr.target = (((util.MEM_TEXT_START + index + 4) & (0b1111<<28)) | util.fromBinary(buffer[6:]) << 2) >> 2
     util.mem_write(util.MEM_TEXT_START + index, util.fromBinary(buffer))
     return instr
 
@@ -59,7 +64,7 @@ def print_parse_result(INST_INFO):
             print("INST_INFO[", i, "].rs : ", INST_INFO[i].rs)
             print("INST_INFO[", i, "].rt : ", INST_INFO[i].rt)
             print("INST_INFO[", i, "].imm : ",
-                  INST_INFO[i].imm)
+                   nbits_to_int(INST_INFO[i].imm, 16))
             
         # TYPE R
         # 0x0: (0b000000)ADD, SLT, ADDU, AND, NOR, OR, SLTU, SLL, SRL, SUBU  if JR

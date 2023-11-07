@@ -59,6 +59,10 @@ if num_inst_set:
 
 
 print("Simulating for %d cycles...\n" % i)
+# For debug
+#import run
+#if run.DEBUG:
+#    sys.stdout = open(sys.argv[argc-1][:-1] + "out", "w")
 while i > 0:
     if util.RUN_BIT == False:
             print("Simulator halted\n")
